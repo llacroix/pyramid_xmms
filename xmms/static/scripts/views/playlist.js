@@ -23,12 +23,14 @@ function(_,Backbone,$){
                 var model = this.model;
                 this.$el.empty();
                 this.$el.html(Templates.PlayList.render(model));
+                var items = this.$el.find('.items');
+
                 for(var media in model.medias){
                     model.medias[media].track_position = parseInt(media);
                     var item = new MyViews.PlayListItem({model: model.medias[media]});
                     item.bind('click', this.options.itemClick);
                     item.on('remove', this.options.itemRemoved, this);
-                    this.$el.append(item.$el);
+                    items.append(item.$el);
                 }
                 //this.$el.html(Templates.PlayList.render(model, {media: Templates.PlayListItem}));
             },
@@ -44,6 +46,7 @@ function(_,Backbone,$){
             }, 
 
             clear: function(e){
+                console.log('render');
                 this.options.onClear(e, this);
                 this.render();
             }

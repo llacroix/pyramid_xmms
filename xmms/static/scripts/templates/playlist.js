@@ -5,12 +5,13 @@ define([
 function(Hogan, $){
     window.Templates = $.extend({
         PlayList: Hogan.compile(
-            '<h3>{{name}}<input type="button" class="clear" value="clear"/></h3>'
+            '<h3>{{name}}<input type="button" class="clear" value="clear"/></h3>' +
+            '<div class="items"></div>'
         ),
 
         PlayListItem: Hogan.compile(
             '<span class="id">[{{track_position}}/{{id}}]</span>' +
-            '<span class="title">{{title}}</span>' +
+            '<span class="title">{{title}}</span><br />' +
             '<span class="artist">{{artist}}</span>' +
             '<a class="remove push-right" href="#">remove</a>'
         )
