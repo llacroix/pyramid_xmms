@@ -5,6 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
   <script type="text/javascript">
       window.remote_addr = "${request.remote_addr}";
+      window.api_url = "${route_url('api')}";
   </script>
   <script data-main="/static/scripts/config" type="text/javascript" src="${static_url('xmms:static/scripts/libs/require.js')}"></script>
   <style type="text/css">

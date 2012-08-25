@@ -8,7 +8,7 @@ require([
     'views/playlist'
 ],
 function(Backbone, $, _, jsonrpc, a, b){
-    window.rpc = new jsonrpc.JsonRpc('http://'+window.remote_addr+':6543/api');
+    window.rpc = new jsonrpc.JsonRpc(window.api_url);
     rpc._batchingMilliseconds = 0;
 
     rpc.call('playlist.current', function(data){
