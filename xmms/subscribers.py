@@ -18,5 +18,6 @@ def add_renderer_globals(event):
     request = event.get("request") or threadlocal.get_current_request()
 
 
+    renderer_globals['request'] = request
     renderer_globals['static_url'] = request.static_url
     renderer_globals['route_url'] = request.route_url
