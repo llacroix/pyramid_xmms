@@ -64,6 +64,9 @@
         <input type="button" value="upload" id="fileupload" />
     </div>
     <div class="wrapper">
+        <div class="player-container"></div>
+        <div class="playlist-container"></div>
+        <div class="medialib-container"></div>
     </div>
 </body>
 </html>

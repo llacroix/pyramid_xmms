@@ -33,7 +33,7 @@ function(Backbone, $, _, jsonrpc, a, b){
             }
         });
 
-        $('.wrapper').append(playlist.$el);
+        $('.playlist-container').append(playlist.$el);
     });
 
     rpc.call('medialib.getAll', function(data){
@@ -54,12 +54,12 @@ function(Backbone, $, _, jsonrpc, a, b){
             }
         });
 
-        $('.wrapper').append(medialib.$el);
+        $('.medialib-container').append(medialib.$el);
     });
 
     window.player = new MyViews.Player();
 
-    $('.wrapper').append(window.player.$el);
+    $('.player-container').append(window.player.$el);
 
     $('#fileupload').click(function(){
         console.log($('#files')[0].files);
