@@ -18,12 +18,12 @@
     </div>
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span3">
+            <div class="left-menu span3">
                 <input id="files" type="file" multiple="multiple" />
                 <input type="button" value="upload" id="fileupload" />
             </div>
             <div class="span9">
-                <div class="hero-unit player-container"></div>
+                <div class="player-container"></div>
                 <div class="row-fluid">
                     <div class="span6 playlist-container"></div>
                     <div class="span6 medialib-container"></div>

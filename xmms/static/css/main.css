@@ -12,6 +12,7 @@
 }
 
 .playlist-item {
+    cursor: pointer;
     margin-bottom: 2px;
     border-radius: 5px;
     color: #3A87AD;
@@ -56,4 +57,8 @@
 .volume .bar,
 .volume {
     height: 28px;
+}
+
+i[class*=icon]:hover {
+    opacity: 0.5;  
 }

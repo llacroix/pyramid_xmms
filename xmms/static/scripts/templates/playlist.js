@@ -10,7 +10,7 @@ function(Hogan, $){
         ),
 
        PlayListItem: Hogan.compile(
-            '<div class="row-fluid {{#active}}active{{/active}}">' +
+            '<div class="row-fluid {{#active}}active{{/active}}" title="{{title}}">' +
                 '<div id="infos" class="span11">' +
                     '<b id="artist">{{artist}}</b> - ' +
                     '<span id="title">{{title}}</span>' +

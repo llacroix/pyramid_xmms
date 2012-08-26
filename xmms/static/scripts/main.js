@@ -118,7 +118,7 @@ function(Backbone, $, _, jsonrpc, moment){
 
             var view = $(Templates.MediaUpload.render({filename: file.name, done: 0}));
             window.views[id] = view;
-            $('.span3').append(view);
+            $('.left-menu').append(view);
 
             reader.onloadend = function(e){
                 var reader = e.srcElement;
@@ -140,6 +140,8 @@ function(Backbone, $, _, jsonrpc, moment){
             formdata.append('files', file);
         });
 
+        var view = $('<h1 class="loading">Loading...</h1>');
+        $('.left-menu').append(view);
         $.ajax({
             url: 'upload',
             type: 'post',
@@ -147,8 +149,7 @@ function(Backbone, $, _, jsonrpc, moment){
             processData: false,
             contentType: false,
             success: function(data){
-                console.log('complete');
-                console.log(data);
+                view.remove();
             }
         });
 
