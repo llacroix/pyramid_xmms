@@ -5,7 +5,8 @@ require([
     'jsonrpc',
 
     'views/controls',
-    'views/playlist'
+    'views/playlist',
+    'models/media'
 ],
 function(Backbone, $, _, jsonrpc, a, b){
     window.rpc = new jsonrpc.JsonRpc(window.api_url);
@@ -14,8 +15,20 @@ function(Backbone, $, _, jsonrpc, a, b){
     rpc.call('playlist.current', function(data){
         window.playlist = new MyViews.PlayList({
             model: {medias: data, name: 'Current playlist'},
-            itemClick: function(e){
-                rpc.call('playback.jump', e.data.model.track_position, function(){});
+            itemClick: function(e, model, ui){
+                rpc.call('playback.jump', model.track_position, function(){});
+
+                if(this.activeSong){
+                    this.activeSong.active = false;
+                    this.activeSongUi.$el.removeClass('active');
+                }
+
+                model.active = true;
+
+                this.activeSong = model;
+                this.activeSongUi = ui;
+
+                ui.render();
             },
 
             itemRemoved: function(e, ui){
@@ -39,10 +52,11 @@ function(Backbone, $, _, jsonrpc, a, b){
     rpc.call('medialib.getAll', function(data){
         window.medialib = new MyViews.PlayList({
             model: {medias: data, name: 'All media lib'},
-            itemClick: function(e){
+            itemClick: function(e, model, ui){
                 //rpc.call('playback.jump', position, function(){});
-                rpc.call('playlist.add_id', e.data.model.id, function(){
-                    playlist.append(e.data.model);
+                var self = this;
+                rpc.call('playlist.add_id', model.id, function(){
+                    playlist.append(model);
                 });
             },
             itemRemoved: function(e, ui){

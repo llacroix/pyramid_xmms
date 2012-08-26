@@ -13,7 +13,10 @@ function(Hogan, $){
                 '<button id="playpause">pause</button>' +
             '{{/playing}}' +
             '<button id="stop">stop</button>' +
-            '<button id="next">&gt;&gt;</button>'
+            '<button id="next">&gt;&gt;</button>' +
+            '<div class="volume">' +
+                '<div class="indicator">&nbsp;</div>' +  
+            '</div>'
         )
     }, window.Templates);
     console.log('template player loaded');

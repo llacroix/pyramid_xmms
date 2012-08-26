@@ -15,6 +15,7 @@ require.config({
         jquery: "libs/jquery",
         underscore: "libs/underscore",
         backbone: "libs/backbone",
+        backboneRelational: "libs/backbone-relational",
         hogan: "libs/hogan",
         jsonrpc: "libs/jsonrpc",
         moment : "libs/moment"
@@ -30,6 +31,10 @@ require.config({
         backbone: {
             deps: ["underscore", "jquery"],
             exports: "Backbone"
+        },
+
+        backboneRelational: {
+            deps: ['backbone']
         },
 
         hogan: {

@@ -27,7 +27,7 @@ function(_,Backbone,$){
 
                 for(var media in model.medias){
                     model.medias[media].track_position = parseInt(media);
-                    var item = new MyViews.PlayListItem({model: model.medias[media]});
+                    var item = new MyViews.PlayListItem({model: model.medias[media], parent: this});
                     item.bind('click', this.options.itemClick);
                     item.on('remove', this.options.itemRemoved, this);
                     items.append(item.$el);
@@ -64,9 +64,15 @@ function(_,Backbone,$){
             render: function(){
                 this.$el.html(Templates.PlayListItem.render(this.model));
                 this.$el.data('id', this.model.id);
+                if(this.model.active){
+                    this.$el.addClass('active');
+                }
             },
             bind: function(event, callback){
-                this.$el.on(event, this, callback);
+                var self = this;
+                this.$el.on(event, function(e){
+                    _.bind(callback, self.options.parent, e, self.model, self)();
+                });
             },
             onRemove: function(e){
                 this.trigger('remove', e, this);

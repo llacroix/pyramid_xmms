@@ -19,7 +19,9 @@ function(_,Backbone,$){
                 'click #prev': 'onPrev',
                 'click #playpause': 'onPlayPause',
                 'click #stop': 'onStop',
-                'click #next': 'onNext'
+                'click #next': 'onNext',
+                'click .volume': 'onVolumeChanged',
+                'drag .volume': 'onVolumeChanged'
             },
 
             initialize: function(){
@@ -55,6 +57,13 @@ function(_,Backbone,$){
                     this.playing = true;
                 }
                 this.render();
+            },
+
+            onVolumeChanged: function(e){
+                console.log('drag');
+                var volume = e.offsetX*100 / $(e.currentTarget).width();
+                rpc.call('server.volume', volume, dummy);
+                $(e.currentTarget).find('.indicator').css('width', volume + '%');
             }
         })
     }, window.MyViews);

@@ -1,0 +1,100 @@
+body {
+    margin: 0 auto;
+}
+
+.logo {
+    height: 2em;
+    margin-bottom: -0.5em;
+}
+
+.header,
+.wrapper {
+    width: 960px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    font-size: 2em;
+}
+
+.playlist .playlist-item {
+    padding: 0.25em;
+    margin-bottom: 1px;
+    border-radius: 5px;
+    border: 1px solid #9bd;
+    background: #abc;
+}
+
+.playlist .playlist-item:hover {
+    background: transparent;
+}
+
+.playlist .playlist-item.active {
+    background: #f0f;
+}
+
+.playlist .playlist-item .id {
+    width: 4em;
+    display: inline-block;
+}
+
+.playlist .items {
+    height: 300px;
+    overflow: auto;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+}
+
+.player {
+    text-align: center;
+}
+
+.player button {
+    font-size: 2em;
+    border-radius: 0.5em;
+}
+
+.playlist-container {
+    width: 48%;
+    margin-right: 2%;
+    float: left;
+}
+
+.push-right {
+    float: right;
+    margin-right: 0.5em;
+}
+
+.playlist-item table {
+    width: 100%;
+}
+
+.playlist-item .actions,
+.playlist-item .info {
+    width: 50px;
+}
+
+.playlist-item .title {
+    font-size: 0.85em;
+}
+
+.playlist-item .artist {
+    font-size: 0.75em;
+    line-height: 0.5em;
+}
+
+.volume {
+    background: #abc;
+    height: 1em;
+    width: 10em;
+    display: inline-block;
+    border-radius: 2px;
+}
+
+.volume .indicator {
+    border-radius: 2px;
+    height: 1em;
+    width: 100%;
+    background: #f0f;
+}

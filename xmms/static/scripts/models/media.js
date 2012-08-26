@@ -1,14 +1,15 @@
 define([
     'backbone',
     'underscore',
-    'jquery'
+    'jquery',
+    'backboneRelational'
 ], function(Backbone, _, $){
     window.Models = $.extend({
-        Media: Backbone.Model.extend({
+        Media: Backbone.RelationalModel.extend({
             fetch: function(){
                 // fetch data
             }
-        });
+        })
     }, window.Models);
 
 });
