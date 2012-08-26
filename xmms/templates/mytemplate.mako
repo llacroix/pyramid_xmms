@@ -7,18 +7,29 @@
         window.api_url = "${route_url('api')}";
     </script>
     <script data-main="/static/scripts/config" type="text/javascript" src="${static_url('xmms:static/scripts/libs/require.js')}"></script>
+    <link href="${static_url('xmms:static/css/bootstrap.min.css')}" rel="stylesheet" type="text/css" />
     <link href="${static_url('xmms:static/css/main.css')}" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <div class="header">
-        <h1><img class="logo" src="${static_url('xmms:static/ktlabs.jpg')}" /> KT-Radio Miaou</h1>
-        <input id="files" type="file" multiple="multiple" />
-        <input type="button" value="upload" id="fileupload" />
+    <div class="navbar">
+        <div class="navbar-inner">
+            <a class="brand">KTRadio</a>
+        </div>
     </div>
-    <div class="wrapper">
-        <div class="player-container"></div>
-        <div class="playlist-container"></div>
-        <div class="medialib-container"></div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3">
+                <input id="files" type="file" multiple="multiple" />
+                <input type="button" value="upload" id="fileupload" />
+            </div>
+            <div class="span9">
+                <div class="hero-unit player-container"></div>
+                <div class="row-fluid">
+                    <div class="span6 playlist-container"></div>
+                    <div class="span6 medialib-container"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -18,7 +18,8 @@ require.config({
         backboneRelational: "libs/backbone-relational",
         hogan: "libs/hogan",
         jsonrpc: "libs/jsonrpc",
-        moment : "libs/moment"
+        moment : "libs/moment",
+        bootsrap : "libs/bootstrap.min"
     },
 
     shim: {

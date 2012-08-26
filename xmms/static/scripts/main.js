@@ -6,9 +6,10 @@ require([
 
     'views/controls',
     'views/playlist',
+    'bootsrap',
     'models/media'
 ],
-function(Backbone, $, _, jsonrpc, a, b){
+function(Backbone, $, _, jsonrpc){
     window.rpc = new jsonrpc.JsonRpc(window.api_url);
     rpc._batchingMilliseconds = 0;
 

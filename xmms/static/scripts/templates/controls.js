@@ -14,8 +14,8 @@ function(Hogan, $){
             '{{/playing}}' +
             '<button id="stop">stop</button>' +
             '<button id="next">&gt;&gt;</button>' +
-            '<div class="volume">' +
-                '<div class="indicator">&nbsp;</div>' +  
+            '<div class="volume progress">' +
+                '<div class="indicator bar">&nbsp;</div>' +  
             '</div>'
         )
     }, window.Templates);

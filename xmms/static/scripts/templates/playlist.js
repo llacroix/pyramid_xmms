@@ -10,21 +10,19 @@ function(Hogan, $){
         ),
 
        PlayListItem: Hogan.compile(
-            '<table>' +
-                '<tr>' +
-                    '<td rowspan="2" class="info"><span class="id">[{{track_position}}/{{id}}]</span></td>' +
-                    '<td><span class="title">{{title}}</span></td>' +
-                    '<td rowspan="2" class="actions"><a class="remove push-right" href="#">remove</a></td>' +
-                '</tr>' +
-                '<tr><td><span class="artist">{{artist}}</span></td></tr>' +
-            '</table>'
+            '<div class="row-fluid {{#active}}active{{/active}}">' +
+                '<div id="identifier" class="span1">[{{track_position}}/{{id}}]</div>' +
+                '<div id="infos" class="span9">' +
+                    '<span class="row-fluid">' +
+                        '<span class="span12">{{title}}</span>' +
+                    '</span>' +
+                    '<span class="row-fluid">' +
+                        '<span class="span12">{{artist}}</span>' +
+                    '</span>' +
+                '</div>' +
+                '<div id="actions" class="span2"><a class="remove btn">remove</a></div>' +
+            '</div>'
        )
-       //PlayListItem: Hogan.compile(
-       //    '<span class="id">[{{track_position}}/{{id}}]</span>' +
-       //    '<span class="title">{{title}}</span><br />' +
-       //    '<span class="artist">{{artist}}</span>' +
-       //    '<a class="remove push-right" href="#">remove</a>'
-       //)
     }, window.Templates);
     console.log('template playlist loaded');
     return true;
