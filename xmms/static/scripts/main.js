@@ -75,6 +75,12 @@ function(Backbone, $, _, jsonrpc){
     window.player = new MyViews.Player();
 
     $('.player-container').append(window.player.$el);
+    
+    window.views = {};
+    window.__i = 0;
+    function getId(){
+        return window.__i++;
+    }
 
     $('#fileupload').click(function(){
         console.log($('#files')[0].files);
@@ -82,15 +88,27 @@ function(Backbone, $, _, jsonrpc){
         formdata = new window.FormData(); 
         _.each(files, function(file){
 
+            var id = getId();
             var reader = new FileReader();
+            reader.file = file;
+            reader.id = id;
+
+            var view = $(Templates.MediaUpload.render({filename: file.name, done: 0}));
+            window.views[id] = view;
+            $('.span3').append(view);
 
             reader.onloadend = function(e){
-                console.log('file loaded');
+                var reader = e.srcElement;
+                views[reader.id].remove();
+                delete views[reader.id];
             };
 
             reader.onprogress = function(e){
                 if(e.lengthComputable){
-                    console.log(e.loaded*1.0/e.total);
+                    var done = e.loaded*100/e.total;
+                    var reader = e.srcElement;
+                    var view = views[reader.id];
+                    view.find('.bar').css('width', done+'%');
                 }
             };
 
@@ -110,5 +128,7 @@ function(Backbone, $, _, jsonrpc){
                 console.log(data);
             }
         });
+
+        $('#files').val(null);
     });
 });

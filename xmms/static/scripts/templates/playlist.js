@@ -5,7 +5,7 @@ define([
 function(Hogan, $){
     window.Templates = $.extend({
         PlayList: Hogan.compile(
-            '<h3>{{name}}<input type="button" class="clear" value="clear"/></h3>' +
+            '<h3>{{name}}  <input type="button" class="btn clear" value="clear"/></h3>' +
             '<div class="items"></div>'
         ),
 
@@ -21,6 +21,15 @@ function(Hogan, $){
                     '</span>' +
                 '</div>' +
                 '<div id="actions" class="span2"><a class="remove btn">remove</a></div>' +
+            '</div>'
+       ),
+
+       MediaUpload: Hogan.compile(
+            '<div class="row-fluid">' +
+                '<div class="span6">{{filename}}</div>' +
+                '<div class="span6 progress">' +
+                    '<div class="bar" style="width: {{done}}%;">&nbsp;</div>' +
+                '</div>' +
             '</div>'
        )
     }, window.Templates);
