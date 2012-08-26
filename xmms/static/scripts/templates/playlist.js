@@ -11,16 +11,17 @@ function(Hogan, $){
 
        PlayListItem: Hogan.compile(
             '<div class="row-fluid {{#active}}active{{/active}}">' +
-                '<div id="identifier" class="span1">[{{track_position}}/{{id}}]</div>' +
-                '<div id="infos" class="span9">' +
-                    '<span class="row-fluid">' +
-                        '<span class="span12">{{title}}</span>' +
-                    '</span>' +
-                    '<span class="row-fluid">' +
-                        '<span class="span12">{{artist}}</span>' +
-                    '</span>' +
+                '<div id="infos" class="span11">' +
+                    '<b id="artist">{{artist}}</b> - ' +
+                    '<span id="title">{{title}}</span>' +
                 '</div>' +
-                '<div id="actions" class="span2"><a class="remove btn">remove</a></div>' +
+                '<div id="actions" class="pull-right">' + 
+                    '<a class="edit"><i class="icon-pencil"></i></a> ' +
+                    '<a class="remove"><i class="icon-remove"></i></a> ' +
+                '</div>' +
+                '<div id="duration" class="pull-right">' + 
+                    '<span class="edit">{{durationParsed}}</span> ' +
+                '</div>' +
             '</div>'
        ),
 

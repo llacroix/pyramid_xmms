@@ -3,17 +3,35 @@ require([
     'jquery', 
     'underscore', 
     'jsonrpc',
+    'moment',
 
     'views/controls',
     'views/playlist',
     'bootsrap',
     'models/media'
 ],
-function(Backbone, $, _, jsonrpc){
+function(Backbone, $, _, jsonrpc, moment){
     window.rpc = new jsonrpc.JsonRpc(window.api_url);
     rpc._batchingMilliseconds = 0;
 
+    function pad(number, length) {
+           
+       var str = '' + number;
+       while (str.length < length) {
+           str = '0' + str;
+       }
+    
+        return str;
+
+    }
+
     rpc.call('playlist.current', function(data){
+        console.log(data);
+        _.each(data, function(song){
+            var duration = moment.duration(song.duration);
+            song.durationParsed = duration.minutes() + ':' + pad(duration.seconds(), 2);
+        });
+
         window.playlist = new MyViews.PlayList({
             model: {medias: data, name: 'Current playlist'},
             itemClick: function(e, model, ui){
@@ -51,6 +69,11 @@ function(Backbone, $, _, jsonrpc){
     });
 
     rpc.call('medialib.getAll', function(data){
+        _.each(data, function(song){
+            var duration = moment.duration(song.duration);
+            song.durationParsed = duration.minutes() + ':' + pad(duration.seconds(), 2);
+        });
+
         window.medialib = new MyViews.PlayList({
             model: {medias: data, name: 'All media lib'},
             itemClick: function(e, model, ui){

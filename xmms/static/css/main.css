@@ -17,6 +17,7 @@
     color: #3A87AD;
     background-color: #D9EDF7;
     border-color: #BCE8F1;
+    padding: 0.5em;
 }
 
 .playlist-item.active {
@@ -25,19 +26,34 @@
     border-color: #D6E9C6;
 }
 
-.playlist-item #identifier {
-    line-height: 3.5em;
-    padding-left: 0.25em;
+.playlist-item #duration {
+    display: block;
+}
+
+.playlist-item:hover #duration {
+    display: none;
 }
 
 .playlist-item #actions {
-    line-height: 3.5em;
+    display: none;
+}
+
+.playlist-item:hover #actions {
+    display: block;
 }
 
 .playlist-item #infos {
-    padding: 0.5em;
+    height: 1.5em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .playlist-item #infos .row-fluid .span12 {
     line-height: 1em;
+}
+
+.volume .bar,
+.volume {
+    height: 28px;
 }

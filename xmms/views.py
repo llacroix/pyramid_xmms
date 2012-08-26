@@ -3,7 +3,7 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 from xmmsclient import xmmsvalue
 from os.path import join
 
-BASIC_INFO = ['id', 'title', 'artist', 'album']
+BASIC_INFO = ['id', 'title', 'artist', 'album', 'duration' ]
 
 @view_config(route_name='home', renderer='mytemplate.mako')
 def my_view(request):
