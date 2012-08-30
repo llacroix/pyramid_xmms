@@ -26,6 +26,7 @@
                         </div>
                         <div id="playlists" class="accordion-body collapse in">
                             <div class="accordion-inner">
+                                <input id="newPlayList" type="text" class="input-xlarge" placeholder="create a new playlist"/>
                                 <ul id="list" class="nav nav-stacked nav-pills">
                                 </ul>
                             </div>
@@ -35,7 +36,7 @@
                         <div class="accordion-heading"> 
                             <a class="accordion-toggle" href="#collections" data-toggle='collapse' data-parent='#accord'>Collections</a>
                         </div>
-                        <div id="collections" class="accordion-body collapse">
+                        <div id="collections" class="accordion-body collapse in">
                             <div class="accordion-inner">
                                 <ul class="nav nav-stacked nav-pills">
                                     <li><a href="#collections/un">Groovy</a></li>
@@ -52,8 +53,13 @@
                         </div>
                         <div id="fileUploads" class="accordion-body collapse">
                             <div class="accordion-inner">
-                                <input id="files" type="file" multiple="multiple" />
-                                <input type="button" value="upload" id="fileupload" />
+                                <button class="btn">
+                                    <input id="files" type="file" multiple="multiple" style="position: absolute; left: -100000px;"/>
+                                    <label for="files">
+                                        <i class="icon-download"></i>Download
+                                    </label>
+                                </button>
+                                <button class="btn" type="button" id="fileupload">Upload</button>
                             </div>
                         </div>
                     </div>

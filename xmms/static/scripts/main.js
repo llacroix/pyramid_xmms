@@ -147,6 +147,14 @@ function(Backbone, $, _, jsonrpc, moment){
         });
     });
 
+    $('#newPlayList').keydown(function(e){
+        if(e.keyCode == 13 && $(this).val().trim()){
+            rpc.call('playlist.create', $(this).val().trim(), function(){
+                window.location.reload();
+            });
+        }
+    });
+
     window.player = new MyViews.Player();
 
     $('.player-container').append(window.player.$el);
