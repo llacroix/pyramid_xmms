@@ -16,7 +16,9 @@ def upload(request):
     directory_url = "file://%s" % directory
     
     for file in files:
-        out = open(join(directory, file.filename), 'wb')
+        filename = join(directory, file.filename)
+        filename_url = "file://%s" % filename
+        out = open(filename, 'wb')
         fin = file.file
         # Finally write the data to the output file
         fin.seek(0)
@@ -27,7 +29,9 @@ def upload(request):
             out.write(data)
         out.close()
 
-    request.client.medialib_import_path(directory_url)
+        request.client.medialib_add_entry(filename_url)
+
+    #request.client.medialib_import_path(directory_url)
 
     return {'ok': len(files)}
 
@@ -103,6 +107,10 @@ def playlist_clear(request, playlist=None):
 @jsonrpc_method('medialib.getAll', endpoint="api")
 def medialib_get_all(request):
     return request.client.coll_query_infos(xmmsvalue.Universe(), BASIC_INFO)
+
+@jsonrpc_method('medialib.set_property', endpoint="api")
+def medialib_set_property(request, id, key, value):
+    return request.client.medialib_property_set(id, key, value)
 
 @jsonrpc_method('server.volume', endpoint='api')
 def server_volume(request, volume=None, channel='master'):

@@ -5,6 +5,7 @@ require([
     'jsonrpc',
     'moment',
 
+    'views/windows',
     'views/controls',
     'views/playlist',
     'bootsrap',
@@ -24,6 +25,35 @@ function(Backbone, $, _, jsonrpc, moment){
         return str;
 
     }
+    var editSong = function(e, ui){
+        e.preventDefault();
+        e.stopPropagation();
+
+        var win = new MyViews.EditWindow({
+            parent: ui,
+            template: Templates.EditSong,
+            onSave: function(model){
+
+                var artist = this.$el.find('#artist').val();
+                var title = this.$el.find('#title').val();
+                var album = this.$el.find('#album').val();
+
+                model.artist = artist;
+                model.album = album;
+                model.title = title;
+
+                rpc.call('medialib.set_property', model.id, 'artist', model.artist, function(){});
+                rpc.call('medialib.set_property', model.id, 'album', model.album, function(){});
+                rpc.call('medialib.set_property', model.id, 'title', model.title, function(){});
+                // RPC CALL HERE
+                this.options.parent.render();
+
+                this.close();
+            }
+        });
+
+        win.open();
+    };
 
     rpc.call('playlist.current', function(data){
         console.log(data);
@@ -31,6 +61,7 @@ function(Backbone, $, _, jsonrpc, moment){
             var duration = moment.duration(song.duration);
             song.durationParsed = duration.minutes() + ':' + pad(duration.seconds(), 2);
         });
+
 
         window.playlist = new MyViews.PlayList({
             model: {medias: data, name: 'Current playlist'},
@@ -56,6 +87,8 @@ function(Backbone, $, _, jsonrpc, moment){
                 rpc.call('playlist.remove_id', ui.model.track_position, function(){});
                 this.remove(ui.model);
             },
+
+            itemEdit: editSong,
 
             onClear: function(e, ui){
                 e.preventDefault();
@@ -86,10 +119,9 @@ function(Backbone, $, _, jsonrpc, moment){
             itemRemoved: function(e, ui){
                 e.preventDefault();
                 e.stopPropagation();
-
-                this.remove(ui.model);
                 console.log('not implemented');
-            }
+            },
+            itemEdit: editSong
         });
 
         $('.medialib-container').append(medialib.$el);

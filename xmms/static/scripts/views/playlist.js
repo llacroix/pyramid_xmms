@@ -30,6 +30,7 @@ function(_,Backbone,$){
                     var item = new MyViews.PlayListItem({model: model.medias[media], parent: this});
                     item.bind('click', this.options.itemClick);
                     item.on('remove', this.options.itemRemoved, this);
+                    item.on('edit', this.options.itemEdit, this);
                     items.append(item.$el);
                 }
                 //this.$el.html(Templates.PlayList.render(model, {media: Templates.PlayListItem}));
@@ -59,7 +60,8 @@ function(_,Backbone,$){
                 this.render();
             },
             events: {
-                'click .remove': 'onRemove'
+                'click .remove': 'onRemove',
+                'click .edit': 'onEdit'
             },
             render: function(){
                 this.$el.html(Templates.PlayListItem.render(this.model));
@@ -76,6 +78,9 @@ function(_,Backbone,$){
             },
             onRemove: function(e){
                 this.trigger('remove', e, this);
+            },
+            onEdit: function(e){
+                this.trigger('edit', e, this);
             }
         })
     }, window.MyViews);
