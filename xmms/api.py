@@ -5,6 +5,22 @@ from os.path import join
 
 BASIC_INFO = ['id', 'title', 'artist', 'album', 'duration' ]
 
+def parse_media(media):
+    '''Parse media return by get info... 
+    It returns a key pair invalid for json
+    {(plugin, type): value}
+    Possible that two plugins will provide same type
+    and the result of one plugin could be deleted...
+    '''
+    new_media = dict()
+
+    for key, val in media.items():
+        new_media[key[1]] = val
+
+    return new_media
+
+## PlayBack
+
 @jsonrpc_method('playback.start', endpoint="api")
 def playback_start(request):
     request.client.playback_start()
@@ -40,15 +56,9 @@ def playback_prev(request):
     return request.client.playlist_current_pos()
 
 
-def parse_media(media):
-    new_media = dict()
-
-    for key, val in media.items():
-        new_media[key[1]] = val
-
-    return new_media
 
 
+## PlayList
 
 @jsonrpc_method('playlist.current', endpoint='api')
 def playlist_current(request):
@@ -62,6 +72,21 @@ def playlist_current(request):
 
     return ret
 
+@jsonrpc_method('playlist.create', endpoint='api')
+def playlist_create(request, name):
+    x = request.client
+    return x.playlist_create(name)
+
+@jsonrpc_method('playlist.list', endpoint='api')
+def playlist_list(request):
+    x = request.client
+    return x.playlist_list()
+
+@jsonrpc_method('playlist.load', endpoint='api')
+def playlist_load(request, name):
+    x = request.client
+    return x.playlist_load(name)
+
 @jsonrpc_method('playlist.add_id', endpoint='api')
 def playlist_add_id(request, id, playlist=None):
     return request.client.playlist_add_id(id, playlist)
@@ -74,13 +99,46 @@ def playlist_remove_id(request, id, playlist=None):
 def playlist_clear(request, playlist=None):
     request.client.playlist_clear(playlist)
 
+# MediaLib
+
 @jsonrpc_method('medialib.getAll', endpoint="api")
 def medialib_get_all(request):
     return request.client.coll_query_infos(xmmsvalue.Universe(), BASIC_INFO)
 
+@jsonrpc_method('medialib.get_info', endpoint="api")
+def medialib_get_info(request, id):
+    return parse_media(request.client.medialib_get_info(id))
+
 @jsonrpc_method('medialib.set_property', endpoint="api")
 def medialib_set_property(request, id, key, value):
     return request.client.medialib_property_set(id, key, value)
+
+@jsonrpc_method('medialib.unset_property', endpoint="api")
+def medialib_unset_property(request, id, key):
+    return request.client.medialib_property_remove(id, key)
+
+@jsonrpc_method('medialib.rehash', endpoint="api")
+def medialib_rehash(request):
+    '''Rehash the medialib for changes, in files'''
+    return request.client.medialib_rehash()
+
+@jsonrpc_method('medialib.refresh', endpoint='api')
+def medialib_refresh(request, id):
+    '''Reimport the configured path, in order to add
+    new files that haven't been added for some reasons
+
+    It shouldn't be needed but if a file has been uploaded 
+    and isn't loaded in the medialib. It should be done here
+    '''
+    # TODO reimport path
+    return None
+
+@jsonrpc_method('medialib.remove', endpoint='api')
+def medialib_remove(request, id):
+    # TODO remove from disk too 
+    return request.client.remove_entry(id)
+
+# Server call
 
 @jsonrpc_method('server.volume', endpoint='api')
 def server_volume(request, volume=None, channel='master'):
