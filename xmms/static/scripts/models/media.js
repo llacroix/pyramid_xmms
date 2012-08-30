@@ -15,6 +15,10 @@ define([
 
             }
         }),
+
+        PlayListItem: Backbone.RelationalModel.extend({
+        }),
+
         PlayList: Backbone.Collection.extend({
             initialize: function(){
                 this.model = Models.PlayListItem;

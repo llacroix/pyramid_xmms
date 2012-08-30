@@ -56,7 +56,6 @@ function(Backbone, $, _, jsonrpc, moment){
     };
 
     rpc.call('playlist.current', function(data){
-        console.log(data);
         _.each(data, function(song){
             var duration = moment.duration(song.duration);
             song.durationParsed = duration.minutes() + ':' + pad(duration.seconds(), 2);
@@ -127,6 +126,27 @@ function(Backbone, $, _, jsonrpc, moment){
         $('.medialib-container').append(medialib.$el);
     });
 
+    rpc.call('playlist.list', function(data){
+        var list = $('#playlists #list');
+        _.each(data, function(name){
+            if(name == '_active')
+                return;
+
+            var playlist = new Models.PlayList();
+            playlist.name = name;
+            console.log(playlist);
+            var item = $('<li>');
+            var link = $('<a>', {text: name, href: '#playlist/'+name});
+            link.click(function(){
+                rpc.call('playlist.load', name, function(){
+                    window.location.reload();
+                });
+            });
+            item.append(link);
+            list.append(item);
+        });
+    });
+
     window.player = new MyViews.Player();
 
     $('.player-container').append(window.player.$el);
@@ -138,7 +158,6 @@ function(Backbone, $, _, jsonrpc, moment){
     }
 
     $('#fileupload').click(function(){
-        console.log($('#files')[0].files);
         files = $('#files')[0].files;
         formdata = new window.FormData(); 
         _.each(files, function(file){
@@ -171,6 +190,7 @@ function(Backbone, $, _, jsonrpc, moment){
 
             formdata.append('files', file);
         });
+
 
         var view = $('<h1 class="loading">Loading...</h1>');
         $('.left-menu').append(view);

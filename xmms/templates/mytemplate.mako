@@ -19,8 +19,45 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="left-menu span3">
-                <input id="files" type="file" multiple="multiple" />
-                <input type="button" value="upload" id="fileupload" />
+                <div class="accordion" id="accord">
+                    <div class="accordion-group">
+                        <div class="accordion-heading"> 
+                            <a class="accordion-toggle" href="#playlists" data-toggle='collapse' data-parent='#accord'>PlayLists</a>
+                        </div>
+                        <div id="playlists" class="accordion-body collapse in">
+                            <div class="accordion-inner">
+                                <ul id="list" class="nav nav-stacked nav-pills">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-group">
+                        <div class="accordion-heading"> 
+                            <a class="accordion-toggle" href="#collections" data-toggle='collapse' data-parent='#accord'>Collections</a>
+                        </div>
+                        <div id="collections" class="accordion-body collapse">
+                            <div class="accordion-inner">
+                                <ul class="nav nav-stacked nav-pills">
+                                    <li><a href="#collections/un">Groovy</a></li>
+                                    <li><a href="#collections/deux">Funk</a></li>
+                                    <li><a href="#collections/trois">Party</a></li>
+                                    <li><a href="#collections/trois">Sexual</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" href="#fileUploads" data-toggle="collapse" data-parent="#accord">Upload</a>
+                        </div>
+                        <div id="fileUploads" class="accordion-body collapse">
+                            <div class="accordion-inner">
+                                <input id="files" type="file" multiple="multiple" />
+                                <input type="button" value="upload" id="fileupload" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="span9">
                 <div class="player-container"></div>
