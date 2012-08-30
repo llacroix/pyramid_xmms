@@ -22,20 +22,12 @@ function(_,Backbone,$){
             },
 
             render: function(){
-                var result = Templates.Window.render(this.model, {contentBlock: this.options.template})
+                var data = _.extend({
+                    windowTitle: '=)'
+                }, this.model);
+                var result = Templates.Window.render(data, {contentBlock: this.options.template})
                 this.$el.html(result);
-                this.$el.css('position', 'absolute');
-                this.$el.css('padding', '0.5em');
-                this.$el.css('background', '#fff');
-                this.$el.css('border', '1px solid #3A87AD');
-
-                var dim= {
-                    width: this.$el.outerWidth(),
-                    height: this.$el.outerHeight()
-                };
-
-                this.$el.css('top', ($(window).height() / 2 - dim.height / 2) + 'px');
-                this.$el.css('left', ($(window).width() / 2 - dim.width / 2) + 'px');
+                this.$el.find('.modal').modal();
             },
 
             open: function(){
@@ -48,7 +40,7 @@ function(_,Backbone,$){
             },
 
             close: function(){
-                this.$el.hide();
+                this.$el.find('.modal').modal('hide');
             },
 
             onCancel: function(){

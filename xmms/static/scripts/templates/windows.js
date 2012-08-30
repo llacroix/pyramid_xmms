@@ -5,13 +5,18 @@ define([
 function(Hogan, $){
     window.Templates = $.extend({
         Window: Hogan.compile(
-            '<div class="window-header">{{windowTitle}} <i class="close icon-close"></i></div>' +
-            '<div class="window-content">' +
-                '{{>contentBlock}}' +
-            '</div>' +
-            '<div class="window-buttons">' +
-                '<a class="btn cancel">{{#i18n}}cancel{{/i18n}}</a>' +
-                '<a class="btn save">{{#i18n}}save{{/i18n}}</a>' +
+            '<div class="modal hide fade">' +
+                '<div class="modal-header">' +
+                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+                    '<h3>{{windowTitle}}</h3>' +
+                '</div>' +
+                '<div class="modal-body">' +
+                    '{{>contentBlock}}' +
+                '</div>' +
+                '<div class="modal-footer">' +
+                    '<a href="#" class="btn cancel">Cancel</a>' +
+                    '<a href="#" class="btn btn-primary save">Save changes</a>' +
+                '</div>' +
             '</div>'
         ),
         EditSong: Hogan.compile(
