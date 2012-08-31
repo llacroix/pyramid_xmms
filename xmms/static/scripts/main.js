@@ -14,23 +14,25 @@ require([
 function(Backbone, $, _, jsonrpc, moment){
     window.rpc = new jsonrpc.JsonRpc(window.api_url);
     rpc._batchingMilliseconds = 0;
-
-    function pad(number, length) {
-           
-       var str = '' + number;
-       while (str.length < length) {
-           str = '0' + str;
-       }
-    
-        return str;
-
+    window.Super = function(obj, method){
+        // Small utility to get super functions of object
+        return _.bind(obj.constructor.__super__[method], obj);
     }
+
+    window.pad = function(number, length) {
+        var str = '' + number;
+        while (str.length < length) {
+            str = '0' + str;
+        }
+        return str;
+    }
+
     var editSong = function(e, ui){
         e.preventDefault();
         e.stopPropagation();
 
         var win = new MyViews.EditWindow({
-            parent: ui,
+            model: ui.model,
             template: Templates.EditSong,
             onSave: function(model){
 
@@ -38,15 +40,15 @@ function(Backbone, $, _, jsonrpc, moment){
                 var title = this.$el.find('#title').val();
                 var album = this.$el.find('#album').val();
 
-                model.artist = artist;
-                model.album = album;
-                model.title = title;
+                model.set({
+                    artist: artist,
+                    album: album,
+                    title: title
+                });
 
-                rpc.call('medialib.set_property', model.id, 'artist', model.artist, function(){});
-                rpc.call('medialib.set_property', model.id, 'album', model.album, function(){});
-                rpc.call('medialib.set_property', model.id, 'title', model.title, function(){});
-                // RPC CALL HERE
-                this.options.parent.render();
+                rpc.call('medialib.set_property', model.id, 'artist', model.get('artist'), function(){});
+                rpc.call('medialib.set_property', model.id, 'album', model.get('album'), function(){});
+                rpc.call('medialib.set_property', model.id, 'title', model.get('title'), function(){});
 
                 this.close();
             }
@@ -55,51 +57,7 @@ function(Backbone, $, _, jsonrpc, moment){
         win.open();
     };
 
-    rpc.call('playlist.current', function(data){
-        _.each(data, function(song){
-            var duration = moment.duration(song.duration);
-            song.durationParsed = duration.minutes() + ':' + pad(duration.seconds(), 2);
-        });
-
-
-        window.playlist = new MyViews.PlayList({
-            model: {medias: data, name: 'Current playlist'},
-            itemClick: function(e, model, ui){
-                rpc.call('playback.jump', model.track_position, function(){});
-
-                if(this.activeSong){
-                    this.activeSong.active = false;
-                    this.activeSongUi.$el.removeClass('active');
-                }
-
-                model.active = true;
-
-                this.activeSong = model;
-                this.activeSongUi = ui;
-
-                ui.render();
-            },
-
-            itemRemoved: function(e, ui){
-                e.preventDefault();
-                e.stopPropagation();
-                rpc.call('playlist.remove_id', ui.model.track_position, function(){});
-                this.remove(ui.model);
-            },
-
-            itemEdit: editSong,
-
-            onClear: function(e, ui){
-                e.preventDefault();
-                e.stopPropagation();
-                rpc.call('playlist.clear', function(){});
-                ui.model.medias = [];
-            }
-        });
-
-        $('.playlist-container').append(playlist.$el);
-    });
-
+    /*
     rpc.call('medialib.getAll', function(data){
         _.each(data, function(song){
             var duration = moment.duration(song.duration);
@@ -125,6 +83,56 @@ function(Backbone, $, _, jsonrpc, moment){
 
         $('.medialib-container').append(medialib.$el);
     });
+    */
+    function medialibReady(data){
+        console.log(data);
+        window.medialib = new MyViews.PlayList({
+            model: data,
+            childView: MyViews.MedialibItem,
+            itemClick: function(e, model, ui){
+            },
+            itemRemoved: function(e, ui){
+            },
+            itemEdit: editSong
+        });
+        $('.medialib-container').append(medialib.$el);
+    }
+
+    var medialibModel = new Models.MediaLib();
+    medialibModel.on('loaded', medialibReady);
+    medialibModel.fetch();
+
+    function playlistReady(data){
+        window.playlist = new MyViews.PlayList({
+            model: data,
+            childView: MyViews.PlayListItem,
+            itemClick: function(e, model, ui){
+                rpc.call('playback.jump', model.get('track_position'), function(){});
+
+                if(this.activeSong){
+                    this.activeSong.set({active: false})
+                }
+                this.activeSong = model;
+                model.set({active: true});
+            },
+            itemRemoved: function(e, ui){
+                console.log(arguments);
+                e.preventDefault();
+                e.stopPropagation();
+                ui.remove();
+            },
+            itemEdit: editSong,
+            onClear: function(e, ui){
+                rpc.call('playlist.clear', function(){});
+                ui.model.reset();
+            }
+        });
+        $('.playlist-container').append(playlist.$el);
+    }
+
+    var currentPlayList = new Models.PlayList();
+    currentPlayList.on('loaded', playlistReady);
+    currentPlayList.fetchCurrent();
 
     rpc.call('playlist.list', function(data){
         var list = $('#playlists #list');
@@ -134,7 +142,6 @@ function(Backbone, $, _, jsonrpc, moment){
 
             var playlist = new Models.PlayList();
             playlist.name = name;
-            console.log(playlist);
             var item = $('<li>');
             var link = $('<a>', {text: name, href: '#playlist/'+name});
             link.click(function(){
@@ -146,7 +153,6 @@ function(Backbone, $, _, jsonrpc, moment){
             list.append(item);
         });
     });
-
     $('#newPlayList').keydown(function(e){
         if(e.keyCode == 13 && $(this).val().trim()){
             rpc.call('playlist.create', $(this).val().trim(), function(){

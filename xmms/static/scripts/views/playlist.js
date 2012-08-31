@@ -25,15 +25,14 @@ function(_,Backbone,$){
                 this.$el.html(Templates.PlayList.render(model));
                 var items = this.$el.find('.items');
 
-                for(var media in model.medias){
-                    model.medias[media].track_position = parseInt(media);
-                    var item = new MyViews.PlayListItem({model: model.medias[media], parent: this});
+                this.model.forEach(function(media){
+
+                    var item = new (this.options.childView)({model: media, parent: this});
                     item.bind('click', this.options.itemClick);
                     item.on('remove', this.options.itemRemoved, this);
                     item.on('edit', this.options.itemEdit, this);
                     items.append(item.$el);
-                }
-                //this.$el.html(Templates.PlayList.render(model, {media: Templates.PlayListItem}));
+                }, this);
             },
 
             append: function(item){
@@ -53,10 +52,11 @@ function(_,Backbone,$){
             }
         }),
 
-        PlayListItem: Backbone.View.extend({
+        MedialibItem: Backbone.View.extend({
             className: 'playlist-item',
 
             initialize: function(){
+                this.model.on('change:active', this.toggleActive, this);
                 this.render();
             },
             events: {
@@ -64,10 +64,18 @@ function(_,Backbone,$){
                 'click .edit': 'onEdit'
             },
             render: function(){
-                this.$el.html(Templates.PlayListItem.render(this.model));
+                this.$el.html(Templates.PlayListItem.render(this.model.toJSON()));
                 this.$el.data('id', this.model.id);
-                if(this.model.active){
+                if(this.model.get('active')){
                     this.$el.addClass('active');
+                }
+            },
+            toggleActive: function(model){
+                console.log('set active');
+                if(this.model.get('active')){
+                    this.$el.addClass('active');
+                }else{
+                    this.$el.removeClass('active');
                 }
             },
             bind: function(event, callback){
@@ -75,6 +83,10 @@ function(_,Backbone,$){
                 this.$el.on(event, function(e){
                     _.bind(callback, self.options.parent, e, self.model, self)();
                 });
+            },
+            remove: function(){
+                Super(this, 'remove')();
+                this.model.off('change:active', this.toggleActive);
             },
             onRemove: function(e){
                 this.trigger('remove', e, this);
@@ -84,5 +96,16 @@ function(_,Backbone,$){
             }
         })
     }, window.MyViews);
+
+    MyViews.PlayListItem = MyViews.MedialibItem.extend({
+        render: function(){
+            this.$el.html(Templates.PlayListItem.render(this.model.get('media').toJSON()));
+            this.$el.data('id', this.model.id);
+            if(this.model.get('active')){
+                this.$el.addClass('active');
+            }
+        }
+    });
+
     console.log('view playlist loaded');
 });

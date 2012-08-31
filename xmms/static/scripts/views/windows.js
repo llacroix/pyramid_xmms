@@ -10,7 +10,6 @@ function(_,Backbone,$){
         EditWindow: Backbone.View.extend({
             className: 'window-wrapper',
             initialize: function(){
-                this.model = this.options.parent.model;
                 $('body').append(this.$el);
                 this.$el.hide();
                 this.render();
@@ -24,7 +23,7 @@ function(_,Backbone,$){
             render: function(){
                 var data = _.extend({
                     windowTitle: '=)'
-                }, this.model);
+                }, this.model.toJSON());
                 var result = Templates.Window.render(data, {contentBlock: this.options.template})
                 this.$el.html(result);
                 this.$el.find('.modal').modal();
@@ -35,7 +34,7 @@ function(_,Backbone,$){
             },
 
             onSave: function(){
-                _.bind(this.options.onSave, this, this.options.parent.model)();
+                _.bind(this.options.onSave, this, this.model)();
                 this.close();
             },
 
