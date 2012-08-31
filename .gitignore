@@ -1,1 +1,3 @@
 *.pyc
+xmms.egg-info/
+pyramid.log
