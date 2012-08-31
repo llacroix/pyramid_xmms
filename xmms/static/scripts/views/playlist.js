@@ -41,12 +41,11 @@ function(_,Backbone,$){
             },
 
             remove: function(item){
-                this.model.medias.splice(item.track_position, 1);
-                this.render();
+                //this.model.medias.splice(item.track_position, 1);
+                //this.render();
             }, 
 
             clear: function(e){
-                console.log('render');
                 this.options.onClear(e, this);
                 this.render();
             }
@@ -57,6 +56,7 @@ function(_,Backbone,$){
 
             initialize: function(){
                 this.model.on('change:active', this.toggleActive, this);
+                this.model.on('change', this.render, this);
                 this.render();
             },
             events: {
@@ -85,8 +85,10 @@ function(_,Backbone,$){
                 });
             },
             remove: function(){
-                Super(this, 'remove')();
+                this.options.parent.remove(this.model);
                 this.model.off('change:active', this.toggleActive);
+                this.model.off('change', this.render);
+                this.$el.remove();
             },
             onRemove: function(e){
                 this.trigger('remove', e, this);
@@ -98,6 +100,19 @@ function(_,Backbone,$){
     }, window.MyViews);
 
     MyViews.PlayListItem = MyViews.MedialibItem.extend({
+        initialize: function(){
+            this.model.on('change:active', this.toggleActive, this);
+            this.model.on('change', this.render, this);
+            this.model.get('media').on('change', this.render, this);
+            this.render();
+        },
+        remove: function(){
+            this.options.parent.remove(this.model);
+            this.model.get('media').off('change', this.render);
+            this.model.off('change:active', this.toggleActive);
+            this.model.off('change', this.render);
+            this.$el.remove();
+        },
         render: function(){
             this.$el.html(Templates.PlayListItem.render(this.model.get('media').toJSON()));
             this.$el.data('id', this.model.id);

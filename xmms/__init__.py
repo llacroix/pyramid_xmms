@@ -14,7 +14,7 @@ def main(global_config, **settings):
     config.include('pyramid_rpc.jsonrpc')
     config.add_jsonrpc_endpoint('api', '/api')
 
-    config.registry.xmms = XMMSSync()
+    config.registry.xmms = XMMSSync('wxmms2')
     config.registry.xmms.connect()
 
     config.include('.subscribers')

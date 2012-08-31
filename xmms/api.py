@@ -13,9 +13,14 @@ def parse_media(media):
     and the result of one plugin could be deleted...
     '''
     new_media = dict()
+    important = dict()
+    plugin = 'client/wxmms2'
 
     for key, val in media.items():
         new_media[key[1]] = val
+        if key[0] == plugin:
+            important[key[1]] = val
+    new_media.update(important)
 
     return new_media
 
@@ -112,7 +117,7 @@ def medialib_get_info(request, id):
 @jsonrpc_method('medialib.set_property', endpoint="api")
 def medialib_set_property(request, id, key, value):
     return request.client.medialib_property_set(id, key, value)
-
+    
 @jsonrpc_method('medialib.unset_property', endpoint="api")
 def medialib_unset_property(request, id, key):
     return request.client.medialib_property_remove(id, key)

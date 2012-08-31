@@ -16,7 +16,21 @@ function(Backbone, $, _, jsonrpc, moment){
     rpc._batchingMilliseconds = 0;
     window.Super = function(obj, method){
         // Small utility to get super functions of object
-        return _.bind(obj.constructor.__super__[method], obj);
+        var funcs = [];
+        function recursive(robj){
+            if(robj.constructor.__super__ && robj.constructor.__super__[method]){
+                funcs.push(_.bind(robj.constructor.__super__[method], obj)); 
+                recursive(robj.constructor.__super__);
+            }
+        }
+        function callback(){
+            var args = arguments;
+            _.each(funcs, function(cb){
+                cb();
+            });
+        }
+
+        return callback;
     }
 
     window.pad = function(number, length) {
@@ -27,12 +41,12 @@ function(Backbone, $, _, jsonrpc, moment){
         return str;
     }
 
-    var editSong = function(e, ui){
+    var editSong = function(e, model){
         e.preventDefault();
         e.stopPropagation();
 
         var win = new MyViews.EditWindow({
-            model: ui.model,
+            model: model,
             template: Templates.EditSong,
             onSave: function(model){
 
@@ -57,33 +71,6 @@ function(Backbone, $, _, jsonrpc, moment){
         win.open();
     };
 
-    /*
-    rpc.call('medialib.getAll', function(data){
-        _.each(data, function(song){
-            var duration = moment.duration(song.duration);
-            song.durationParsed = duration.minutes() + ':' + pad(duration.seconds(), 2);
-        });
-
-        window.medialib = new MyViews.PlayList({
-            model: {medias: data, name: 'All media lib'},
-            itemClick: function(e, model, ui){
-                //rpc.call('playback.jump', position, function(){});
-                var self = this;
-                rpc.call('playlist.add_id', model.id, function(){
-                    playlist.append(model);
-                });
-            },
-            itemRemoved: function(e, ui){
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('not implemented');
-            },
-            itemEdit: editSong
-        });
-
-        $('.medialib-container').append(medialib.$el);
-    });
-    */
     function medialibReady(data){
         console.log(data);
         window.medialib = new MyViews.PlayList({
@@ -93,7 +80,9 @@ function(Backbone, $, _, jsonrpc, moment){
             },
             itemRemoved: function(e, ui){
             },
-            itemEdit: editSong
+            itemEdit: function(e, ui){
+                editSong(e, ui.model)
+            }
         });
         $('.medialib-container').append(medialib.$el);
     }
@@ -121,7 +110,9 @@ function(Backbone, $, _, jsonrpc, moment){
                 e.stopPropagation();
                 ui.remove();
             },
-            itemEdit: editSong,
+            itemEdit: function(e, ui){
+                editSong(e, ui.model.get('media'))
+            },
             onClear: function(e, ui){
                 rpc.call('playlist.clear', function(){});
                 ui.model.reset();
