@@ -36,7 +36,9 @@ function(_,Backbone,$){
             },
 
             append: function(item){
-                this.model.medias.push(item);
+                item.track_position = this.model.length;
+                this.model.add(item);
+                rpc.call('playlist.add_id', item.media.id, function(){});
                 this.render();
             },
 

@@ -5,6 +5,7 @@ require([
     'jsonrpc',
     'moment',
 
+    'api',
     'views/windows',
     'views/controls',
     'views/playlist',
@@ -77,6 +78,8 @@ function(Backbone, $, _, jsonrpc, moment){
             model: data,
             childView: MyViews.MedialibItem,
             itemClick: function(e, model, ui){
+                console.log(model);
+                playlist.append({media: model});
             },
             itemRemoved: function(e, ui){
             },
