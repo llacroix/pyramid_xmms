@@ -38,11 +38,7 @@
                         </div>
                         <div id="collections" class="accordion-body collapse in">
                             <div class="accordion-inner">
-                                <ul class="nav nav-stacked nav-pills">
-                                    <li><a href="#collections/un">Groovy</a></li>
-                                    <li><a href="#collections/deux">Funk</a></li>
-                                    <li><a href="#collections/trois">Party</a></li>
-                                    <li><a href="#collections/trois">Sexual</a></li>
+                                <ul id="list" class="nav nav-stacked nav-pills">
                                 </ul>
                             </div>
                         </div>

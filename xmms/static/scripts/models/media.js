@@ -5,7 +5,107 @@ define([
     'moment',
     'backboneRelational'
 ], function(Backbone, _, $, moment){
+    window.Traversal = {
+        findRoot: function(obj){
+            var current = obj;
+
+            while(current.name){
+                current = current.parent;
+            }
+
+            return current;
+        },
+
+        findResource: function(obj, path){
+            var current = obj,
+                parts = path.split('/');
+
+            if(path.charAt(0) == '/'){
+                current = Traversal.findRoot(obj);
+                parts = parts.slice(1);
+            }
+            try{
+                parts.forEach(function(key){
+                    if(key == '..'){
+                        current = current.parent;
+                    }else if(key == '.'){
+
+                    }else{
+                        current = current.getChild(key)    
+                    }
+                });
+            }catch(e){
+                // Got an error key doesn'T exist return null
+                return null;
+            }
+            return current;
+        },
+
+        resourcePath: function(obj){
+            var current = obj,
+                parts = [],
+                name;
+
+            do{
+                name = obj.name;
+                parts.push(name);
+                obj = obj.parent;
+            }while(name);
+            
+            return parts.reverse().join('/');
+        },
+        
+        resourceUrl: function(obj){
+            return Configuration.baseUrl + Traversal.resourcePath(obj);
+        },
+
+        traverse: function(root, path){
+            var current = root,
+                parts = path.split('/').slice(1),
+                subpath = path.split('/').slice(1);
+
+            try{
+                _.each(parts, function(elem){
+                    console.log(elem);
+                    current = current.getChild(elem);
+                    subpath.splice(0, 1);
+                });
+            }catch(e){
+
+            }
+
+            return {
+                context: current,
+                subpath: subpath
+            }
+        }
+    };
+
+
     window.Models = $.extend({
+        Traversable: Backbone.Model.extend({
+            initialize: function(parent, name){
+                if(parent){
+                    this.parent = parent;
+                    this.parent.children[name] = this;
+                    this.name = name;
+                }else{
+                    this.name = null;
+                    this.parent = null;
+                }
+
+                this.children = {};
+            },
+
+            getChild: function(name){
+                var ret = this.children[name];
+
+                if(ret == undefined)
+                    throw "KeyError";
+
+                return this.children[name];
+            }
+        }),
         Media: Backbone.RelationalModel.extend({
             initialize: function(media){
                 var duration = moment.duration(media.duration);

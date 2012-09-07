@@ -2,6 +2,14 @@ from pyramid.view import view_config
 from pyramid_rpc.jsonrpc import jsonrpc_method
 from xmmsclient import xmmsvalue
 from os.path import join
+from pyramid.response import Response
+from .api import observers
+
+import gevent
+from gevent.queue import Queue
+from gevent.event import Event
+import logging
+log = logging.getLogger('fun tester')
 
 @view_config(route_name='home', renderer='mytemplate.mako')
 def my_view(request):
@@ -32,3 +40,43 @@ def upload(request):
     #request.client.medialib_import_path(directory_url)
 
     return {'ok': len(files)}
+
+
+@view_config(route_name='notifications', renderer="json")
+def wait(request):
+    obs = Observer(obss=observers)
+
+    observers.append(obs)
+
+    r = Response()
+    r.content_type = 'application/json'
+    r.app_iter = obs
+    return r
+
+
+@view_config(route_name='notify', renderer="json")
+def notify(request):
+
+    log.debug(observers)
+
+    for i in observers:
+        i.put('hello')
+        i.put(StopIteration)
+
+    return len(observers)
+
+class Observer(Queue):
+    def __init__(self, *args, **kw):
+        obss = kw.pop('obss')
+        self.event = Event()
+        Queue.__init__(self, *args, **kw)
+        def reaper():
+            self.event.clear()
+            self.event.wait(30)
+            obss.remove(self)
+
+        gevent.spawn(reaper)
+
+    def get(self, *args, **kw):
+        self.event.set()
+        return Queue.get(self, *args, **kw)

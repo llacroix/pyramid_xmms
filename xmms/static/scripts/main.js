@@ -147,6 +147,15 @@ function(Backbone, $, _, jsonrpc, moment){
             list.append(item);
         });
     });
+    rpc.call('collection.list', function(data){
+        var list = $('#collections #list');
+        _.each(data, function(name){
+            var item = $('<li>');
+            var link = $('<a>', {text: name, href: '#playlist/'+name});
+            item.append(link);
+            list.append(item);
+        });
+    });
     $('#newPlayList').keydown(function(e){
         if(e.keyCode == 13 && $(this).val().trim()){
             rpc.call('playlist.create', $(this).val().trim(), function(){

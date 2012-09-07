@@ -1,3 +1,4 @@
+from gevent import monkey; monkey.patch_socket()
 from pyramid.config import Configurator
 from xmmsclient import XMMSSync
 
@@ -9,6 +10,8 @@ def main(global_config, **settings):
 
     config.add_route('home', '/')
     config.add_route('upload', '/upload')
+    config.add_route('notifications', '/wait')
+    config.add_route('notify', '/notify')
 
     # Setup json-rpc
     config.include('pyramid_rpc.jsonrpc')

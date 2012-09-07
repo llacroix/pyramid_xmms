@@ -38,13 +38,17 @@ function(_,Backbone,$){
             append: function(item){
                 item.track_position = this.model.length;
                 this.model.add(item);
+                // updates trackposition after this track
                 rpc.call('playlist.add_id', item.media.id, function(){});
                 this.render();
             },
 
             remove: function(item){
                 //this.model.medias.splice(item.track_position, 1);
-                //this.render();
+                this.model.remove(item);
+                // updates trackposition after this track
+                rpc.call('playlist.remove_id', item.get('track_position'), function(){});
+                this.render();
             }, 
 
             clear: function(e){

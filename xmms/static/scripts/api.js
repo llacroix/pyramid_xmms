@@ -4,8 +4,14 @@ define([
 ],
 function(_,jsonrpc){
     window.ApiSchema = {
+        server: {
+        },
+        collection: {
+            list: {},
+            get: {}
+        },
         playlist: {
-
+            list: {}
         },
         medialib: {
 

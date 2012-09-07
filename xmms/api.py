@@ -2,8 +2,26 @@ from pyramid.view import view_config
 from pyramid_rpc.jsonrpc import jsonrpc_method
 from xmmsclient import xmmsvalue
 from os.path import join
+from gevent.queue import Queue
+
+observers = []
 
 BASIC_INFO = ['id', 'title', 'artist', 'album', 'duration' ]
+
+class Observer(Queue):
+    def __init__(self, *args, **kw):
+        game = kw.pop('game')
+        self.event = Event()
+        Queue.__init__(self, *args, **kw)
+        def reaper():
+            self.event.clear()
+            self.event.wait(30)
+            game.remove_observer(self)
+        gevent.spawn(reaper)
+
+    def get(self, *args, **kw):
+        self.event.set()
+        return Queue.get(self, *args, **kw)
 
 def parse_media(media):
     '''Parse media return by get info... 
@@ -24,7 +42,6 @@ def parse_media(media):
 
     return new_media
 
-## PlayBack
 
 @jsonrpc_method('playback.start', endpoint="api")
 def playback_start(request):
@@ -60,7 +77,13 @@ def playback_prev(request):
 
     return request.client.playlist_current_pos()
 
+## Collections
 
+
+@jsonrpc_method('collection.list', endpoint='api')
+def collection_list(request):
+    x = request.client
+    return x.coll_list()
 
 
 ## PlayList
@@ -105,7 +128,6 @@ def playlist_clear(request, playlist=None):
     request.client.playlist_clear(playlist)
 
 # MediaLib
-
 @jsonrpc_method('medialib.getAll', endpoint="api")
 def medialib_get_all(request):
     return request.client.coll_query_infos(xmmsvalue.Universe(), BASIC_INFO)

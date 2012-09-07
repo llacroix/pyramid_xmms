@@ -6,6 +6,11 @@
     min-height: 1em;
 }
 
+#playlists #newPlayList {
+    width: 100%;
+    margin-left: -5px;
+}
+
 .playlist .items {
     height: 300px;
     overflow: auto;
