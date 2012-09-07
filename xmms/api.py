@@ -2,26 +2,11 @@ from pyramid.view import view_config
 from pyramid_rpc.jsonrpc import jsonrpc_method
 from xmmsclient import xmmsvalue
 from os.path import join
-from gevent.queue import Queue
 
-observers = []
+from .models import notify, notify_all
+
 
 BASIC_INFO = ['id', 'title', 'artist', 'album', 'duration' ]
-
-class Observer(Queue):
-    def __init__(self, *args, **kw):
-        game = kw.pop('game')
-        self.event = Event()
-        Queue.__init__(self, *args, **kw)
-        def reaper():
-            self.event.clear()
-            self.event.wait(30)
-            game.remove_observer(self)
-        gevent.spawn(reaper)
-
-    def get(self, *args, **kw):
-        self.event.set()
-        return Queue.get(self, *args, **kw)
 
 def parse_media(media):
     '''Parse media return by get info... 
@@ -63,6 +48,8 @@ def playback_get_current_id(request):
 def playback_jump(request, position):
     request.client.playlist_set_next(position)
     request.client.playback_tickle()
+    notify_all({'playback.position': position})
+    return position
 
 @jsonrpc_method('playback.next', endpoint="api")
 def playback_next(request):
@@ -173,5 +160,7 @@ def server_volume(request, volume=None, channel='master'):
     if volume and 0 <= volume <= 100:
         request.client.playback_volume_set(channel, volume)
 
-    return request.client.playback_volume_get().get(channel)
+    ret = request.client.playback_volume_get().get(channel)
+    notify_all(dict(volume=ret))
+    return ret
 

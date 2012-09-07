@@ -5,6 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
     <script type="text/javascript">
         window.api_url = "${route_url('api')}";
+        window.base_url = "${route_url('home')}";
     </script>
     <script data-main="/static/scripts/config" type="text/javascript" src="${static_url('xmms:static/scripts/libs/require.js')}"></script>
     <link href="${static_url('xmms:static/css/bootstrap.min.css')}" rel="stylesheet" type="text/css" />

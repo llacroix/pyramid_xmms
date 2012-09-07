@@ -72,6 +72,27 @@ function(Backbone, $, _, jsonrpc, moment){
         win.open();
     };
 
+
+    function updateVolume(){
+        $.ajax({
+            url: window.base_url + 'wait', 
+            dataType: 'json',
+            success: function(data){
+                if(data.volume){
+                    $('.indicator').css('width', data.volume + '%');
+                }else if('playback.position' in data){
+                    playlist.trigger('currentSong', data['playback.position']);
+                }
+                updateVolume();
+            }, 
+            error: function(){
+                updateVolume();
+            },
+            timeout: 10000
+        });
+    }
+    updateVolume();
+
     function medialibReady(data){
         console.log(data);
         window.medialib = new MyViews.PlayList({
@@ -120,6 +141,14 @@ function(Backbone, $, _, jsonrpc, moment){
                 rpc.call('playlist.clear', function(){});
                 ui.model.reset();
             }
+        });
+        playlist.on('currentSong', function(position){
+            var model = this.model.at(position);
+            if(this.activeSong){
+                this.activeSong.set({active: false})
+            }
+            this.activeSong = model;
+            model.set({active: true});
         });
         $('.playlist-container').append(playlist.$el);
     }
