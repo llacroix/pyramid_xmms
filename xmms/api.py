@@ -3,7 +3,7 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 from xmmsclient import xmmsvalue
 from os.path import join
 
-from .models import notify, notify_all
+from .models import notify, notify_all, ws_notify_all
 
 ws_views = {}
 
@@ -63,6 +63,7 @@ def playback_jump(request, position):
     request.client.playlist_set_next(position)
     request.client.playback_tickle()
     notify_all({'playback.position': position})
+    ws_notify_all('playback.jump', position)
     return position
 
 @add_ws_view('playback.next')
@@ -70,7 +71,9 @@ def playback_jump(request, position):
 def playback_next(request):
     request.client.playlist_set_next_rel(1)
     request.client.playback_tickle()
-    return request.client.playlist_current_pos()
+    ret = request.client.playlist_current_pos()
+    ws_notify_all('playback.next', ret)
+    return ret
 
 @add_ws_view('playback.previous')
 @jsonrpc_method('playback.previous', endpoint="api")
@@ -78,7 +81,9 @@ def playback_prev(request):
     request.client.playlist_set_next_rel(-1)
     request.client.playback_tickle()
 
-    return request.client.playlist_current_pos()
+    ret = request.client.playlist_current_pos()
+    ws_notify_all('playback.previous', ret)
+    return ret
 
 ## Collections
 
@@ -193,7 +198,7 @@ def server_volume(request, volume=None, channel='master'):
         request.client.playback_volume_set(channel, volume)
 
     ret = request.client.playback_volume_get().get(channel)
-    notify_all(dict(volume=ret))
+    ws_notify_all('server.volume', ret)
     return ret
 
 @add_ws_view('server.discover')

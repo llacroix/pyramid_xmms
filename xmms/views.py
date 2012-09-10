@@ -21,8 +21,10 @@ import json
 import logging
 log = logging.getLogger('fun tester')
 
-from .models import Observer, observers
+from .models import Observer, observers, sockets, ws_notify_all
 from .api import ws_views
+
+
 
 @view_config(route_name='home', renderer='mytemplate.mako')
 def my_view(request):
@@ -31,30 +33,41 @@ def my_view(request):
 @view_config(route_name='socket', renderer="json")
 def wsocket(request):
     ws = request.environ['wsgi.websocket']
+    sockets.append(ws)
 
-    while True:
+    ws_notify_all('connected', len(sockets))
+    print 'new user '
 
-        data = ws.receive()
+    try:
+        while True:
 
-        req = json.loads(data)
+            data = ws.receive()
 
-        resp = {
-            'jsonrpc': '2.0',
-            'method': req.get('method'),
-            'id': req.get('id'),
-        }
+            req = json.loads(data)
 
-        #from pyramid_rpc.api import view_lookup
-        try:
-            print req
-            params = req.get('params') or []
-            data = ws_views[req.get('method')](request, *params)
-            resp['result'] = data
-        except:
-            data = { 'code': -32601, 'message': 'method not found' }
-            resp['error'] = data
+            resp = {
+                'jsonrpc': '2.0',
+                'method': req.get('method'),
+                'id': req.get('id'),
+            }
 
-        ws.send(json.dumps(resp))
+
+            #from pyramid_rpc.api import view_lookup
+            try:
+                print len(sockets)
+
+                params = req.get('params') or []
+                data = ws_views[req.get('method')](request, *params)
+                resp['result'] = data
+            except:
+                data = { 'code': -32601, 'message': 'method not found' }
+                resp['error'] = data
+
+            ws.send(json.dumps(resp))
+    except:
+        print "closing"
+        sockets.remove(ws)
+        ws_notify_all('connected', len(sockets))
 
 @view_config(route_name='upload', renderer="json")
 def upload(request):

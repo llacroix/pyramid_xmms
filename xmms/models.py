@@ -25,6 +25,21 @@ class Observer(Queue):
         self.event.set()
         return Queue.get(self, *args, **kw)
 
+def ws_notify_all(method, value):
+    global sockets
+
+    resp = {
+        'jsonrpc': '2.0',
+        'method': method,
+        'id': None,
+        'result': value
+    }
+
+    str_val = json.dumps(resp)
+
+    for i in sockets:
+        i.send(str_val)
+
 def notify_all(value):
     global observers
 

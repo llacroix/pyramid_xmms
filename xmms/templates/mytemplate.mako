@@ -16,6 +16,7 @@
     <div class="navbar">
         <div class="navbar-inner">
             <a class="brand">KTRadio</a>
+            <span class="btn btn-inverse pull-right"><a class="connected">1</a> users connected</span>
         </div>
     </div>
     <div class="container-fluid">

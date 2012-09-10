@@ -70,9 +70,9 @@ function(Backbone, $, _, jsonrpc, moment){
                     title: title
                 });
 
-                rpc.call('medialib.set_property', model.id, 'artist', model.get('artist'), function(){});
-                rpc.call('medialib.set_property', model.id, 'album', model.get('album'), function(){});
-                rpc.call('medialib.set_property', model.id, 'title', model.get('title'), function(){});
+                ws.send(create_call('medialib.set_property', [model.id, 'artist', model.get('artist')]));
+                ws.send(create_call('medialib.set_property', [model.id, 'album', model.get('album')]));
+                ws.send(create_call('medialib.set_property', [model.id, 'title', model.get('title')]));
 
                 this.close();
             }
@@ -105,13 +105,15 @@ function(Backbone, $, _, jsonrpc, moment){
     ws.onmessage = function(result){
         var data = JSON.parse(result.data);
         if(data.result){
-            console.log(data.result);
+            console.log(data);
             if(data.method == 'server.volume'){
                 $('.indicator').css('width', data.result + '%');
             }else if(data.method == 'playback.jump'){
                 playlist.trigger('currentSong', data.result);
             }else if(data.method == 'playback.next' || data.method == 'playback.previous'){
                 playlist.trigger('currentSong', data.result.position);
+            }else if (data.method == 'connected'){
+                $('.connected').text(data.result);
             }
         }else{
             console.log(data.error);
