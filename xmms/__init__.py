@@ -1,14 +1,30 @@
-from gevent import monkey; monkey.patch_socket()
+#from gevent import monkey; monkey.patch_socket()
 from pyramid.config import Configurator
 from xmmsclient import XMMSSync
+from .tools import when_ready, on_starting
+from gunicorn.config import WhenReady, OnStarting
+
+
+def log_request(self):
+    log = self.server.log
+    if log:
+        if hasattr(log, "info"):
+            log.info(self.format_request() + '\n')
+        else:
+            log.write(self.format_request() + '\n')
+
+import gevent.pywsgi
+gevent.pywsgi.WSGIHandler.log_request = log_request
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
+
     config = Configurator(settings=settings)
     config.add_static_view('static', 'static', cache_max_age=3600)
 
     config.add_route('home', '/')
+    config.add_route('socket', '/socket')
     config.add_route('upload', '/upload')
     config.add_route('notifications', '/wait')
     config.add_route('notify', '/notify')
@@ -23,4 +39,6 @@ def main(global_config, **settings):
     config.include('.subscribers')
 
     config.scan()
-    return config.make_wsgi_app()
+    app = config.make_wsgi_app()
+
+    return app

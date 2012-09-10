@@ -13,6 +13,15 @@ require([
     'models/media'
 ],
 function(Backbone, $, _, jsonrpc, moment){
+    create_call = function(method, params){
+        return JSON.stringify({
+            jsonrpc: "2.0",
+            id: getId(),
+            method: method,
+            params: params
+        });
+    };
+
     window.rpc = new jsonrpc.JsonRpc(window.api_url);
     rpc._batchingMilliseconds = 0;
     window.Super = function(obj, method){
@@ -73,7 +82,7 @@ function(Backbone, $, _, jsonrpc, moment){
     };
 
 
-    function updateVolume(){
+    /*function updateVolume(){
         $.ajax({
             url: window.base_url + 'wait', 
             dataType: 'json',
@@ -91,7 +100,23 @@ function(Backbone, $, _, jsonrpc, moment){
             timeout: 10000
         });
     }
-    updateVolume();
+    updateVolume();*/
+    ws = new WebSocket(socket_url);
+    ws.onmessage = function(result){
+        var data = JSON.parse(result.data);
+        if(data.result){
+            console.log(data.result);
+            if(data.method == 'server.volume'){
+                $('.indicator').css('width', data.result + '%');
+            }else if(data.method == 'playback.jump'){
+                playlist.trigger('currentSong', data.result);
+            }else if(data.method == 'playback.next' || data.method == 'playback.previous'){
+                playlist.trigger('currentSong', data.result.position);
+            }
+        }else{
+            console.log(data.error);
+        }
+    };
 
     function medialibReady(data){
         console.log(data);
@@ -120,7 +145,8 @@ function(Backbone, $, _, jsonrpc, moment){
             model: data,
             childView: MyViews.PlayListItem,
             itemClick: function(e, model, ui){
-                rpc.call('playback.jump', model.get('track_position'), function(){});
+                //rpc.call('playback.jump', model.get('track_position'), function(){});
+                ws.send(create_call('playback.jump', [model.get('track_position')]))
 
                 if(this.activeSong){
                     this.activeSong.set({active: false})

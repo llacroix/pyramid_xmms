@@ -33,16 +33,19 @@ function(_,Backbone,$){
             },
             
             onPrev: function(e){
-                rpc.call('playback.previous', dummy);
+                //rpc.call('playback.previous', dummy);
+                ws.send(create_call('playback.previous', []));
             },
 
             onNext: function(e){
-                rpc.call('playback.next', dummy);
+                //rpc.call('playback.next', dummy);
+                ws.send(create_call('playback.next', []));
             },
 
             onStop: function(e){
                 var self = this;
-                rpc.call('playback.stop', dummy);
+                //rpc.call('playback.stop', dummy);
+                ws.send(create_call('playback.stop', []));
                 this.playing = false;
                 this.render();
             },
@@ -50,10 +53,12 @@ function(_,Backbone,$){
             onPlayPause: function(e){
                 var self = this;
                 if(this.playing){
-                    rpc.call('playback.pause', dummy);
+                    //rpc.call('playback.pause', dummy);
+                    ws.send(create_call('playback.pause', []));
                     this.playing = false;
                 }else{
-                    rpc.call('playback.start', dummy);
+                    //rpc.call('playback.start', dummy);
+                    ws.send(create_call('playback.start', []));
                     this.playing = true;
                 }
                 this.render();
@@ -62,7 +67,8 @@ function(_,Backbone,$){
             onVolumeChanged: function(e){
                 console.log('drag');
                 var volume = e.offsetX*100 / $(e.currentTarget).width();
-                rpc.call('server.volume', volume, dummy);
+                //rpc.call('server.volume', volume, dummy);
+                ws.send(create_call('server.volume', [volume]));
                 $(e.currentTarget).find('.indicator').css('width', volume + '%');
             }
         })

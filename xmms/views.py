@@ -1,17 +1,60 @@
+from pyramid.interfaces import IRequest
+from pyramid.interfaces import IRouteRequest
+from pyramid.interfaces import IView
+from pyramid.interfaces import IViewClassifier
+from pyramid.interfaces import IViewMapperFactory
+
+from zope.interface import implements
+from zope.interface import providedBy
+
+
+
 from pyramid.view import view_config
+from pyramid.request import Request
+
 from pyramid_rpc.jsonrpc import jsonrpc_method
 from xmmsclient import xmmsvalue
 from os.path import join
 from pyramid.response import Response
+import json
 
 import logging
 log = logging.getLogger('fun tester')
 
 from .models import Observer, observers
+from .api import ws_views
 
 @view_config(route_name='home', renderer='mytemplate.mako')
 def my_view(request):
     return {'project':'xmms'}
+
+@view_config(route_name='socket', renderer="json")
+def wsocket(request):
+    ws = request.environ['wsgi.websocket']
+
+    while True:
+
+        data = ws.receive()
+
+        req = json.loads(data)
+
+        resp = {
+            'jsonrpc': '2.0',
+            'method': req.get('method'),
+            'id': req.get('id'),
+        }
+
+        #from pyramid_rpc.api import view_lookup
+        try:
+            print req
+            params = req.get('params') or []
+            data = ws_views[req.get('method')](request, *params)
+            resp['result'] = data
+        except:
+            data = { 'code': -32601, 'message': 'method not found' }
+            resp['error'] = data
+
+        ws.send(json.dumps(resp))
 
 @view_config(route_name='upload', renderer="json")
 def upload(request):
