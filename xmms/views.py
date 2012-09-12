@@ -24,8 +24,6 @@ log = logging.getLogger('fun tester')
 from .models import Observer, observers, sockets, ws_notify_all
 from .api import ws_views
 
-
-
 @view_config(route_name='home', renderer='mytemplate.mako')
 def my_view(request):
     return {'project':'xmms'}
@@ -51,11 +49,7 @@ def wsocket(request):
                 'id': req.get('id'),
             }
 
-
-            #from pyramid_rpc.api import view_lookup
             try:
-                print len(sockets)
-
                 params = req.get('params') or []
                 data = ws_views[req.get('method')](request, *params)
                 resp['result'] = data

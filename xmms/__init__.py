@@ -1,8 +1,10 @@
-#from gevent import monkey; monkey.patch_socket()
 from pyramid.config import Configurator
 from xmmsclient import XMMSSync
 from .tools import when_ready, on_starting
+from .models import ws_notify_all
 from gunicorn.config import WhenReady, OnStarting
+import gevent
+from gevent import sleep
 
 
 def log_request(self):

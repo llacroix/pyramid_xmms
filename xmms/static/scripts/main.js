@@ -81,39 +81,33 @@ function(Backbone, $, _, jsonrpc, moment){
         win.open();
     };
 
-
-    /*function updateVolume(){
-        $.ajax({
-            url: window.base_url + 'wait', 
-            dataType: 'json',
-            success: function(data){
-                if(data.volume){
-                    $('.indicator').css('width', data.volume + '%');
-                }else if('playback.position' in data){
-                    playlist.trigger('currentSong', data['playback.position']);
-                }
-                updateVolume();
-            }, 
-            error: function(){
-                updateVolume();
-            },
-            timeout: 10000
-        });
-    }
-    updateVolume();*/
     ws = new WebSocket(socket_url);
     ws.onmessage = function(result){
         var data = JSON.parse(result.data);
         if(data.result){
             console.log(data);
-            if(data.method == 'server.volume'){
-                $('.indicator').css('width', data.result + '%');
-            }else if(data.method == 'playback.jump'){
-                playlist.trigger('currentSong', data.result);
-            }else if(data.method == 'playback.next' || data.method == 'playback.previous'){
-                playlist.trigger('currentSong', data.result.position);
-            }else if (data.method == 'connected'){
-                $('.connected').text(data.result);
+            var val = data.result;
+            var method = data.method;
+
+            if(method == 'broadcast.playback_volume_changed'){
+                $('.indicator').css('width', val.master + '%');
+            }else if(method == 'playback.jump'){
+                playlist.trigger('currentSong', val);
+            }else if(method == 'playback.next' || method == 'playback.previous'){
+                playlist.trigger('currentSong', val.position);
+            }else if (method == 'connected'){
+                $('.connected').text(val);
+            }else if(method == 'broadcast.playlist_current_pos'){
+                playlist.trigger('currentSong', val.position);
+            }else if(method == 'broadcast.playback_status'){
+                if(val == 0){
+                    player.playing = false;
+                }else if(val == 1){
+                    player.playing = true;
+                }else if(val == 2){
+                    player.playing = false;
+                }
+                player.render();
             }
         }else{
             console.log(data.error);
