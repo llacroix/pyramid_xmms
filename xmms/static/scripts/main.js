@@ -217,7 +217,7 @@ function(Backbone, $, _, jsonrpc, moment){
 
     window.player = new MyViews.Player();
 
-    $('.player-container').append(window.player.$el);
+    $('.nav-controls').append(window.player.$el);
     
     window.views = {};
     window.__i = 0;
