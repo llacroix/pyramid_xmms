@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Pyramid xmms : XMMS2 web interface" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Pyramid xmms</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/llacroix/pyramid_xmms">View on GitHub</a>
+
+          <h1 id="project_title">Pyramid xmms</h1>
+          <h2 id="project_tagline">XMMS2 web interface</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/llacroix/pyramid_xmms/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/llacroix/pyramid_xmms/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>Pyramid xmms2 server</h1>
+
+<h1>Requirements:</h1>
+
+<p>In order to run the server, you have to have xmms2 installed
+with the xmmsclient python client. If you're using virtualenvs,
+It might be a bit tricky. By default, --no-site-packages is used and 
+the xmmsclient can't be installed with setuptools. You'll have to 
+either use site-packages or copy the xmmsclient to your virtualenv.</p>
+
+<p>You'll have to use the same python binary since it is compiled with 
+some C bindings.</p>
+
+<h1>Setup:</h1>
+
+<p>Launching the following command will install all dependencies for the
+server to run to the exception of xmmsclient.</p>
+
+<pre><code>python setup.py develop
+</code></pre>
+
+<h1>Running</h1>
+
+<p>To run the server, you can use the following command for dev:</p>
+
+<pre><code>gunicorn_paster development.ini 
+</code></pre>
+
+<p>Replace development.ini for production.ini to use the production config file.</p>
+
+<h1>News:</h1>
+
+<p>The project is now using websockets. I first wrote it using long polling events but after thinking about it. Using websockes makes a lot of sense. Polling event has the advantage to work everywhere while websockets might make implementation harder with different systems or technologies. That being said. The jsonrpc api endpoint is still present. I'm going to remove the long polling part probably. What it means is that it's still possible to send jsonrpc request using plain http but it won't be possible to receive broadcasts event. </p>
+
+<p>Websockets is used using jsonrpc too. So moving from one style to an other was pretty cool. The only thing that changed is the transport. I'm probably going to leave jsonrpcjs and write my own jsonrpc client for websocket transport. </p>
+
+<p>So what's cool about jsonrpc + websocket. It's not exactly following the spec of jsonrpc but here's the thing. </p>
+
+<p>Jsonrpc support doing a call with an ID... what would happen if we're doing file uploads. We could update progress through jsonrpc but how do we know where the update should go.</p>
+
+<p>I had in mind to do something like that: package_playlist.</p>
+
+<p>This call would be used and may return multiple times. We have to setup a callback that will live x times. For example, packaging a playlist of 100 songs should return at least 100 times for each packages song. It will call the same callback with the progress and that callback knows exactly what to update. In that case, we can't use broadcasts since we'd have to define in our broadcasts a target in order to know which callback to use. And that broadcast should have a limited lifetime..</p>
+
+<p>Being able to return a value multiple time is making things much easier.</p>
+
+<h1>Projects uses:</h1>
+
+<p>Some projects used for this project:</p>
+
+<ul>
+<li>pyramid</li>
+<li>mako</li>
+<li>backbonejs</li>
+<li>requiresjs</li>
+<li>momentjs</li>
+<li>xmmsclient</li>
+<li>jquery </li>
+<li>gevent</li>
+<li>gunicorn</li>
+</ul><h1>Technologies:</h1>
+
+<ul>
+<li>Async api</li>
+<li>Websockets</li>
+<li>Jsonrpc</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Pyramid xmms maintained by <a href="https://github.com/llacroix">llacroix</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
